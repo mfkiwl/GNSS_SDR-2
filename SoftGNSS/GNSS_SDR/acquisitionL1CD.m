@@ -1,4 +1,4 @@
-function acqResults = acquisition(longSignal, settings)
+function acqResults = acquisitionL1CD(longSignal, settings)
 %Function performs cold start acquisition on the collected "data". It
 %searches for GPS signals of all satellites, which are listed in field
 %"acqSatelliteList" in the settings structure. Function saves code phase
@@ -65,9 +65,8 @@ phasePoints = (0 : (samplesPerCode-1)) * 2 * pi * ts;
 % Number of the frequency bins for the given acquisition band
 numberOfFrqBins = round( (settings.acqSearchBand*1000) / settings.acqSearchBin) + 1;
 
-% Generate all C/A codes and sample them according to the sampling freq.
-caCodesTable = makeCaTable(settings);
-
+% Generate all L1CD codes and sample them according to the sampling freq.
+L1CDCodesTable = makeL1CDTable(settings);
 
 %--- Initialize arrays to speed up the code -------------------------------
 % Search results of all frequency bins and code shifts (for one satellite)
@@ -80,7 +79,7 @@ frqBins     = zeros(1, numberOfFrqBins);
 %--- Initialize acqResults ------------------------------------------------
 % Carrier frequencies of detected signals
 acqResults.carrFreq     = zeros(1, 32);
-% C/A code phases of detected signals
+% L1CD code phases of detected signals
 acqResults.codePhase    = zeros(1, 32);
 % Correlation peak ratios of the detected signals
 acqResults.peakMetric   = zeros(1, 32);
@@ -91,8 +90,8 @@ fprintf('(');
 for PRN = settings.acqSatelliteList
 
 %% Correlate signals ======================================================   
-    %--- Perform DFT of C/A code ------------------------------------------
-    caCodeFreqDom = conj(fft(caCodesTable(PRN, :)));
+    %--- Perform DFT of L1CD code ------------------------------------------
+    L1CDCodeFreqDom = conj(fft(L1CDCodesTable(PRN, :)));
 
     %--- Make the correlation for whole frequency band (for all freq. bins)
     for frqBinIndex = 1:numberOfFrqBins
@@ -117,8 +116,8 @@ for PRN = settings.acqSatelliteList
 
         %--- Multiplication in the frequency domain (correlation in time
         %domain)
-        convCodeIQ1 = IQfreqDom1 .* caCodeFreqDom;
-        convCodeIQ2 = IQfreqDom2 .* caCodeFreqDom;
+        convCodeIQ1 = IQfreqDom1 .* L1CDCodeFreqDom;
+        convCodeIQ2 = IQfreqDom2 .* L1CDCodeFreqDom;
 
         %--- Perform inverse DFT and store correlation results ------------
         acqRes1 = abs(ifft(convCodeIQ1)) .^ 2;
@@ -134,6 +133,8 @@ for PRN = settings.acqSatelliteList
         
     end % frqBinIndex = 1:numberOfFrqBins
 
+%     figure;
+%     mesh(results);
 %% Look for correlation peaks in the results ==============================
     % Find the highest peak and compare it to the second highest peak
     % The second peak is chosen not closer than 1 chip to the highest peak
@@ -144,12 +145,12 @@ for PRN = settings.acqSatelliteList
     %--- Find code phase of the same correlation peak ---------------------
     [peakSize,  codePhase] = max(max(results));
 
-    %--- Find 1 chip wide C/A code phase exclude range around the peak ----
+    %--- Find 1 chip wide L1CD code phase exclude range around the peak ----
     samplesPerCodeChip   = round(settings.samplingFreq / settings.codeFreqBasis);
     excludeRangeIndex1 = codePhase - samplesPerCodeChip;
     excludeRangeIndex2 = codePhase + samplesPerCodeChip;
 
-    %--- Correct C/A code phase exclude range if the range includes array
+    %--- Correct L1CD code phase exclude range if the range includes array
     %boundaries
     if excludeRangeIndex1 < 2
         codePhaseRange = excludeRangeIndex2 : ...
@@ -184,19 +185,14 @@ for PRN = settings.acqSatelliteList
         %--- Indicate PRN number of the detected signal -------------------
         fprintf('%02d ', PRN);
         
-        %--- Generate 10msec long C/A codes sequence for given PRN --------
-        caCode = generateCAcode(PRN);
-        
-        codeValueIndex = floor((ts * (1:10*samplesPerCode)) / ...
-                               (1/settings.codeFreqBasis));
-                           
-        longCaCode = caCode((rem(codeValueIndex, 1023) + 1));
+        %--- Get 10msec long L1CD codes sequence for given PRN --------
+        L1CDCode = L1CDCodesTable(PRN, :);
     
-        %--- Remove C/A code modulation from the original signal ----------
-        % (Using detected C/A code phase)
+        %--- Remove L1CD code modulation from the original signal ----------
+        % (Using detected L1CD code phase)
         xCarrier = ...
-            signal0DC(codePhase:(codePhase + 10*samplesPerCode-1)) ...
-            .* longCaCode;
+            signal0DC(codePhase:(codePhase + samplesPerCode-1)) ...
+            .* L1CDCode;
         
         %--- Compute the magnitude of the FFT, find maximum and the
         %associated carrier frequency

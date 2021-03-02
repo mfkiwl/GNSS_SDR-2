@@ -1,4 +1,4 @@
-function settings = initSettings()
+function settings = initSettingsL1CD()
 %Functions initializes and saves settings. Settings can be edited inside of
 %the function, updated from the command line or updated using a dedicated
 %GUI - "setSettings".  
@@ -40,7 +40,7 @@ function settings = initSettings()
 %% Processing settings ====================================================
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
-settings.msToProcess        = 1000;        %[ms]
+settings.msToProcess        = 100000;        %[ms]
 
 % Number of channels to be used for signal processing
 settings.numberOfChannels   = 12;
@@ -49,7 +49,7 @@ settings.numberOfChannels   = 12;
 % processing at any point in the data record (e.g. for long records). fseek
 % function is used to move the file read point, therefore advance is byte
 % based only. 
-settings.skipNumberOfBytes     = 2*4.096e6; 
+settings.skipNumberOfBytes     = 1*4.096e6; 
 
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
@@ -62,7 +62,7 @@ settings.dataType           = 'schar';       % uchar, schar = 1 byte
 settings.fileType           = 2;             % 2 = IQ, 1 = Real
 settings.dataSize           = 1;             % bytes
 settings.IF                 = 0.0;           % [Hz]
-settings.samplingFreq       = 4.096e6;       % [Hz]
+settings.samplingFreq       = 4096000;       % [Hz]
 % looking for 1,3,9,11,14,16,22,23,26,32, 235
 
 % File Types
@@ -72,18 +72,18 @@ settings.samplingFreq       = 4.096e6;       % [Hz]
 settings.codeFreqBasis      = 1.023e6;      %[Hz]
 
 % Define number of chips in a code period
-settings.codeLength         = 1023;
+settings.codeLength         = 10230;
 
 %% Acquisition settings ===================================================
 % Skips acquisition in the script postProcessing.m if set to 1
 settings.skipAcquisition    = 0;
 % List of satellites to look for. Some satellites can be excluded to speed
 % up acquisition
-settings.acqSatelliteList   = 1:32;         %[PRN numbers]
+settings.acqSatelliteList   = 18;         %[PRN numbers]
 %settings.acqSatelliteList   = [3,4,14,22,23,26,31];         %[PRN numbers]
 % Band around IF to search for satellite signal. Depends on max Doppler
-settings.acqSearchBand      = 14;           %[kHz] total bandwidth not one side!
-settings.acqSearchBin       = 250;          %[Hz]  Bin size
+settings.acqSearchBand      = 10;           %[kHz] total bandwidth not one side!
+settings.acqSearchBin       = 50;          %[Hz]  Bin size
 % Threshold for the signal presence decision rule
 settings.acqThreshold       = 1.5;
 
@@ -91,11 +91,11 @@ settings.acqThreshold       = 1.5;
 % Code tracking loop parameters
 settings.dllDampingRatio         = 0.7;
 settings.dllNoiseBandwidth       =   2;       %[Hz]
-settings.dllCorrelatorSpacing    = 0.5;     %[chips]
+settings.dllCorrelatorSpacing    = 0.2;     %[chips]
 
 % Carrier tracking loop parameters
 settings.pllDampingRatio         = 0.7;
-settings.pllNoiseBandwidth       =  25;      %[Hz]
+settings.pllNoiseBandwidth       =  2.5;      %[Hz]
 
 %% Navigation solution settings ===========================================
 
