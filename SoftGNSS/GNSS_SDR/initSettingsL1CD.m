@@ -79,7 +79,7 @@ settings.codeLength         = 10230;
 settings.skipAcquisition    = 0;
 % List of satellites to look for. Some satellites can be excluded to speed
 % up acquisition
-settings.acqSatelliteList   = 18;         %[PRN numbers]
+settings.acqSatelliteList   = [4 14 18 23];         %[PRN numbers]
 %settings.acqSatelliteList   = [3,4,14,22,23,26,31];         %[PRN numbers]
 % Band around IF to search for satellite signal. Depends on max Doppler
 settings.acqSearchBand      = 10;           %[kHz] total bandwidth not one side!
