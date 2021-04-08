@@ -49,7 +49,7 @@ settings.numberOfChannels   = 12;
 % processing at any point in the data record (e.g. for long records). fseek
 % function is used to move the file read point, therefore advance is byte
 % based only. 
-settings.skipNumberOfBytes     = 2*4.096e6; 
+settings.skipNumberOfBytes     = 0e6; 
 
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
@@ -58,11 +58,13 @@ settings.skipNumberOfBytes     = 2*4.096e6;
 % 120s sample worked!
 settings.fileName = ...
      '/media/shinge/Backup Plus/Data/gpsL1_HackRF_Fs4M096_Fq157542_20210220_l40_a1_g36_p1_S1s_csac_4'; 
+settings.fileName = ...
+     '/home/shinge/Downloads/SpaceWire_Test_20210309_095013_RawData_L1C.bin'; 
 settings.dataType           = 'schar';       % uchar, schar = 1 byte
 settings.fileType           = 2;             % 2 = IQ, 1 = Real
 settings.dataSize           = 1;             % bytes
-settings.IF                 = 0.0;           % [Hz]
-settings.samplingFreq       = 4.096e6;       % [Hz]
+settings.IF                 = 4.092e6;           % [Hz]
+settings.samplingFreq       = 16.368e6;       % [Hz]
 % looking for 1,3,9,11,14,16,22,23,26,32, 235
 
 % File Types
@@ -79,13 +81,13 @@ settings.codeLength         = 1023;
 settings.skipAcquisition    = 0;
 % List of satellites to look for. Some satellites can be excluded to speed
 % up acquisition
-settings.acqSatelliteList   = 1:32;         %[PRN numbers]
-%settings.acqSatelliteList   = [3,4,14,22,23,26,31];         %[PRN numbers]
+%settings.acqSatelliteList   = 1:32;         %[PRN numbers]
+settings.acqSatelliteList   = [3,5,6];         %[PRN numbers]
 % Band around IF to search for satellite signal. Depends on max Doppler
 settings.acqSearchBand      = 14;           %[kHz] total bandwidth not one side!
 settings.acqSearchBin       = 250;          %[Hz]  Bin size
 % Threshold for the signal presence decision rule
-settings.acqThreshold       = 1.5;
+settings.acqThreshold       = 1.75;
 
 %% Tracking loops settings ================================================
 % Code tracking loop parameters

@@ -88,7 +88,7 @@ for channelNr = activeChnList
     index = find(...
         abs(tlmXcorrResult(xcorrLength : xcorrLength * 2 - 1)) > 153)' + ...
         searchStartOffset;
-
+~= '-'
 %% Analyze detected preamble like patterns ================================
     for i = 1:size(index) % For each occurrence
 
@@ -109,10 +109,10 @@ for channelNr = activeChnList
             % in Total 62 bits mast be read :
             % 2 bits from previous subframe are needed for parity checking;
             % 60 bits for the first two 30bit words (TLM and HOW words).
-            % The index is pointing at the start of TLM word.
+            % The index is pointing at the start of TLM word.~= '-'
             bits = trackResults(channelNr).I_P(index(i)-40 : ...
                                                index(i) + 20 * 60 -1)';
-
+~= '-'
             %--- Combine the 20 values of each bit ------------------------
             bits = reshape(bits, 20, (size(bits, 1) / 20));
             bits = sum(bits);
